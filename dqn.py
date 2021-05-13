@@ -70,7 +70,7 @@ class DQN(nn.Module):
         #       the input would be a [32, 4] tensor and the output a [32, 1] tensor.
         # TODO: Implement epsilon-greedy exploration.
         if exploit == True:
-            return torch.tensor([[random.randrange(self.n_actions)]], device=device, dtype=torch.long)
+            return self(observation).max(1)[1].view(1, 1)
 
         eps_treshold = self.eps_end + (self.eps_start - self.eps_end) * math.exp(-1 * self.steps_done / self.anneal_length)
         self.steps_done += 1
