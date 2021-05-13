@@ -31,7 +31,7 @@ if __name__ == '__main__':
     # Initialize deep Q-networks.
     dqn = DQN(env_config=env_config).to(device)
     # TODO: Create and initialize target Q-network.
-
+    target_dqn = DQN(env_config=env_config).to(device)
     # Create replay memory.
     memory = ReplayMemory(env_config['memory_size'])
 
@@ -45,29 +45,34 @@ if __name__ == '__main__':
         done = False
 
         obs = preprocess(env.reset(), env=args.env).unsqueeze(0)
-        
+        count = 0
         while not done:
             # TODO: Get action from DQN.
-            action = None
+            action = dqn.act(obs)
 
             # Act in the true environment.
-            obs, reward, done, info = env.step(action)
+            #print(env)
+            old_obs = obs
+            obs, reward, done, info = env.step(action.item())
 
             # Preprocess incoming observation.
             if not done:
                 obs = preprocess(obs, env=args.env).unsqueeze(0)
-            
+            memory.push(old_obs,action,obs,reward)
             # TODO: Add the transition to the replay memory. Remember to convert
             #       everything to PyTorch tensors!
 
             # TODO: Run DQN.optimize() every env_config["train_frequency"] steps.
-
             # TODO: Update the target network every env_config["target_update_frequency"] steps.
-
+            if (count % env_config['train_frequency']==0):
+                loss = optimize(dqn, target_dqn, memory, optimizer)
+            if (count % env_config['target_update_frequency']==0):
+                target_dqn = DQN(env_config=env_config).to(device)
+            count+=1
         # Evaluate the current agent.
         if episode % args.evaluate_freq == 0:
             mean_return = evaluate_policy(dqn, env, env_config, args, n_episodes=args.evaluation_episodes)
-            
+
             print(f'Episode {episode}/{env_config["n_episodes"]}: {mean_return}')
 
             # Save current agent if it has the best performance so far.
@@ -76,6 +81,6 @@ if __name__ == '__main__':
 
                 print('Best performance so far! Saving model.')
                 torch.save(dqn, f'models/{args.env}_best.pt')
-        
+
     # Close environment after training is completed.
     env.close()

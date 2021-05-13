@@ -38,19 +38,19 @@ def evaluate_policy(dqn, env, env_config, args, n_episodes, render=False, verbos
             if render:
                 env.render()
 
-            action = dqn.act(obs_stack, exploit=True).item()
+            action = dqn.act(obs, exploit=True).item()
 
             obs, reward, done, info = env.step(action)
             obs = preprocess(obs, env=args.env).unsqueeze(0)
 
             episode_return += reward
-        
+
         total_return += episode_return
-        
+
         if verbose:
             print(f'Finished episode {i+1} with a total return of {episode_return}')
 
-    
+
     return total_return / n_episodes
 
 if __name__ == '__main__':

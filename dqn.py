@@ -5,6 +5,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+import math
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
@@ -51,6 +53,8 @@ class DQN(nn.Module):
         self.relu = nn.ReLU()
         self.flatten = nn.Flatten()
 
+        self.steps_done = 0
+
     def forward(self, x):
         """Runs the forward pass of the NN depending on architecture."""
         x = self.relu(self.fc1(x))
@@ -65,8 +69,18 @@ class DQN(nn.Module):
         #       For example, if the state dimension is 4 and the batch size is 32,
         #       the input would be a [32, 4] tensor and the output a [32, 1] tensor.
         # TODO: Implement epsilon-greedy exploration.
+        if exploit == True:
+            return torch.tensor([[random.randrange(self.n_actions)]], device=device, dtype=torch.long)
 
-        raise NotImplmentedError
+        eps_treshold = self.eps_end + (self.eps_start - self.eps_end) * math.exp(-1 * self.steps_done / self.anneal_length)
+        self.steps_done += 1
+
+        if random.random() > eps_treshold:
+            with torch.no_grad():
+                return self(observation).max(1)[1].view(1, 1)
+        else:
+            return torch.tensor([[random.randrange(self.n_actions)]], device=device, dtype=torch.long)
+        #raise NotImplmentedError
 
 def optimize(dqn, target_dqn, memory, optimizer):
     """This function samples a batch from the replay buffer and optimizes the Q-network."""
@@ -82,9 +96,9 @@ def optimize(dqn, target_dqn, memory, optimizer):
     # TODO: Compute the current estimates of the Q-values for each state-action
     #       pair (s,a). Here, torch.gather() is useful for selecting the Q-values
     #       corresponding to the chosen actions.
-    
+
     # TODO: Compute the Q-value targets. Only do this for non-terminal transitions!
-    
+
     # Compute loss.
     loss = F.mse_loss(q_values.squeeze(), q_value_targets)
 
