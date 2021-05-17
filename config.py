@@ -29,3 +29,32 @@ CartPole = {
     'anneal_length': 10**4,
     'n_actions': 2,
 }
+
+#Hyperparmameters for Pong-v0
+Pong = {
+    'memory_size': 10000,
+    'n_episodes': 1000,
+    'batch_size': 32,
+    'target_update_frequency': 1000,
+    'train_frequency': 4,
+    'gamma': 0.99,
+    'lr': 1e-4,
+    'eps_start': 1.0,
+    'eps_end': 0.01,
+    'anneal_length': 10**6,
+    'n_actions': 2,
+    'obs_stack_size':4,
+}
+
+'''
+Observation stack size: 4
+Replay memory capacity: 10000
+Batch size: 32
+Target update frequency: 1000
+Training frequency: 4
+Discount factor: 0.99
+Learning rate: 1e-4
+Initial epsilon: 1.0
+Final epsilon: 0.01
+Anneal length: 10**6
+'''
