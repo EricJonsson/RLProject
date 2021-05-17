@@ -58,7 +58,10 @@ if __name__ == '__main__':
             # Preprocess incoming observation.
             if not done:
                 obs = preprocess(obs, env=args.env).unsqueeze(0)
-            memory.push(old_obs,action,obs,reward)
+            else:
+                obs = None
+                
+            memory.push(old_obs, action, obs, reward)
             # TODO: Add the transition to the replay memory. Remember to convert
             #       everything to PyTorch tensors!
 
@@ -67,7 +70,7 @@ if __name__ == '__main__':
             if (count % env_config['train_frequency']==0):
                 loss = optimize(dqn, target_dqn, memory, optimizer)
             if (count % env_config['target_update_frequency']==0):
-                target_dqn = DQN(env_config=env_config).to(device)
+                target_dqn.load_state_dict(dqn.state_dict())
             count+=1
         # Evaluate the current agent.
         if episode % args.evaluate_freq == 0:
