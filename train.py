@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
     for episode in range(env_config['n_episodes']):
         done = False
-        obs = preprocess(env.reset(), env=args.env).unsqueeze(0)
+        obs = preprocess(env.reset(), envID=args.env, env=env).unsqueeze(0)
         obs_stack = torch.cat(env_config['obs_stack_size'] * [obs]).unsqueeze(0).to(device)
         count = 0
         while not done:
@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
             # Preprocess incoming observation.
             if not done:
-                obs = preprocess(obs, env=args.env).unsqueeze(0)
+                obs = preprocess(obs, envID=args.env, env=env).unsqueeze(0)
             else:
                 obs = None
             next_obs_stack = torch.cat((obs_stack[:, 1:, ...], obs.unsqueeze(1)), dim=1).to(device)
