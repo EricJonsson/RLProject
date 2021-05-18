@@ -59,10 +59,9 @@ if __name__ == '__main__':
                 obs = preprocess(obs, envID=args.env, env=env).unsqueeze(0)
                 next_obs_stack = torch.cat((obs_stack[:, 1:, ...], obs.unsqueeze(1)), dim=1).to(device)
             else:
-                printf("DONE")
                 obs = None
-            
-            
+
+
             memory.push(obs_stack, action, next_obs_stack, reward)
             obs_stack = next_obs_stack
 
@@ -79,7 +78,7 @@ if __name__ == '__main__':
             count+=1
         # Evaluate the current agent.
         if episode % args.evaluate_freq == 0:
-            mean_return = evaluate_policy(dqn, env, env_config, args, n_episodes=args.evaluation_episodes)
+            mean_return = evaluate_policy(dqn, env_config, args, n_episodes=args.evaluation_episodes, env=env)
 
             print(f'Episode {episode}/{env_config["n_episodes"]}: {mean_return}')
 

@@ -29,7 +29,7 @@ def evaluate_policy(dqn, env, env_config, args, n_episodes, render=False, verbos
     total_return = 0
 
     for i in range(n_episodes):
-        obs = preprocess(env.reset(), env=args.env).unsqueeze(0)
+        obs = preprocess(env.reset(), env=env, envID=args.env).unsqueeze(0)
 
         done = False
         episode_return = 0
@@ -41,7 +41,7 @@ def evaluate_policy(dqn, env, env_config, args, n_episodes, render=False, verbos
             action = dqn.act(obs, exploit=True).item()
 
             obs, reward, done, info = env.step(action)
-            obs = preprocess(obs, env=args.env).unsqueeze(0)
+            obs = preprocess(obs, env=env, envID=args.env).unsqueeze(0)
 
             episode_return += reward
 
