@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
             # Act in the true environment.
             #print(env)
-            old_obs = obs
+            #old_obs = obs
             obs, reward, done, info = env.step(action.item())
 
             # Preprocess incoming observation.
@@ -62,9 +62,11 @@ if __name__ == '__main__':
                 next_obs_stack = torch.cat((obs_stack[:, 1:, ...], obs.unsqueeze(1)), dim=1).to(device)
             else:
                 obs = None
+            
+            
+            memory.push(obs_stack, action, next_obs_stack, reward)
+            obs_stack = next_obs_stack
 
-
-            memory.push(old_obs, action, next_obs_stack, reward)
             # TODO: Add the transition to the replay memory. Remember to convert
             #       everything to PyTorch tensors!
 
