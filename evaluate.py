@@ -11,7 +11,7 @@ from utils import preprocess
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--env', choices=['CartPole-v0'])
+parser.add_argument('--env', choices=['CartPole-v0','Pong-v0','Breakout-v0'])
 parser.add_argument('--path', type=str, help='Path to stored DQN model.')
 parser.add_argument('--n_eval_episodes', type=int, default=1, help='Number of evaluation episodes.', nargs='?')
 parser.add_argument('--render', dest='render', action='store_true', help='Render the environment.')
@@ -22,6 +22,8 @@ parser.set_defaults(save_video=False)
 # Hyperparameter configurations for different environments. See config.py.
 ENV_CONFIGS = {
     'CartPole-v0': config.CartPole,
+    'Pong-v0': config.Pong,
+    'Breakout-v0': config.Breakout
 }
 
 def evaluate_policy(dqn, env, env_config, args, n_episodes, render=False, verbose=False):
@@ -38,12 +40,11 @@ def evaluate_policy(dqn, env, env_config, args, n_episodes, render=False, verbos
             if render:
                 env.render()
 
-            action = dqn.act(obs_stack, exploit=True).item() + 2
-
+            action = dqn.act(obs_stack, exploit=True).item() + ENV_CONFIGS[args.env]['offset']
             obs, reward, done, info = env.step(action)
+
             obs = preprocess(obs, env=env, envID=args.env).unsqueeze(0)
-            next_obs_stack = torch.cat((obs_stack[:, 1:, ...], obs.unsqueeze(1)), dim=1).to(device)
-            obs_stack = next_obs_stack
+            obs_stack = torch.cat((obs_stack[:, 1:, ...], obs.unsqueeze(1)), dim=1).to(device)
 
             episode_return += reward
 

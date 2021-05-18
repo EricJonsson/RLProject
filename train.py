@@ -12,7 +12,7 @@ from dqn import DQN, ReplayMemory, optimize
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--env', choices=['CartPole-v0','Pong-v0'])
+parser.add_argument('--env', choices=['CartPole-v0','Pong-v0','Breakout-v0'])
 parser.add_argument('--render', default=False,type=bool,choices=[True, False])
 parser.add_argument('--evaluate_freq', type=int, default=25, help='How often to run evaluation.', nargs='?')
 parser.add_argument('--evaluation_episodes', type=int, default=5, help='Number of evaluation episodes.', nargs='?')
@@ -20,7 +20,8 @@ parser.add_argument('--evaluation_episodes', type=int, default=5, help='Number o
 # Hyperparameter configurations for different environments. See config.py.
 ENV_CONFIGS = {
     'CartPole-v0': config.CartPole,
-    'Pong-v0': config.Pong
+    'Pong-v0': config.Pong,
+    'Breakout-v0': config.Breakout
 }
 
 if __name__ == '__main__':
@@ -53,7 +54,7 @@ if __name__ == '__main__':
             # Act in the true environment.
             #print(env)
             #old_obs = obs
-            obs, reward, done, info = env.step(action.item() + 2)
+            obs, reward, done, info = env.step(action.item() + ENV_CONFIGS[args.env]['offset'])
             if args.render:
                 env.render()
             # Preprocess incoming observation.

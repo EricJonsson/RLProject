@@ -45,7 +45,26 @@ Pong = {
     'anneal_length': 10**6,
     'n_actions': 2,
     'obs_stack_size':4,
+    'offset':2,
 }
+
+#Hyperparmameters for Pong-v0
+Breakout = {
+    'memory_size': 10000,
+    'n_episodes': 1000,
+    'batch_size': 32,
+    'target_update_frequency': 1000,
+    'train_frequency': 4,
+    'gamma': 0.99,
+    'lr': 1e-4,
+    'eps_start': 1.0,
+    'eps_end': 0.01,
+    'anneal_length': 10**6,
+    'n_actions': 3,
+    'obs_stack_size':4,
+    'offset':1
+}
+
 
 '''
 Observation stack size: 4
