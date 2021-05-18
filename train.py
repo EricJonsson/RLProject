@@ -41,7 +41,6 @@ if __name__ == '__main__':
 
     # Keep track of best evaluation mean return achieved so far.
     best_mean_return = -float("Inf")
-
     for episode in range(env_config['n_episodes']):
         done = False
         obs = preprocess(env.reset(), envID=args.env, env=env).unsqueeze(0)
@@ -49,18 +48,18 @@ if __name__ == '__main__':
         count = 0
         while not done:
             # TODO: Get action from DQN.
-            action = dqn.act(obs)
-
+            action = dqn.act(obs_stack)
             # Act in the true environment.
             #print(env)
             #old_obs = obs
             obs, reward, done, info = env.step(action.item())
-
+            env.render()
             # Preprocess incoming observation.
             if not done:
                 obs = preprocess(env.reset(), envID=args.env, env=env).unsqueeze(0)
                 next_obs_stack = torch.cat((obs_stack[:, 1:, ...], obs.unsqueeze(1)), dim=1).to(device)
             else:
+                printf("DONE")
                 obs = None
             
             

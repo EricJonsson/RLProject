@@ -82,10 +82,10 @@ class DQN(nn.Module):
 
         eps_treshold = self.eps_end + (self.eps_start - self.eps_end) * math.exp(-1 * self.steps_done / self.anneal_length)
         self.steps_done += 1
-
+        
         if random.random() > eps_treshold:
-            with torch.no_grad():
-                return self(observation).max(1)[1].view(1, 1)
+            #with torch.no_grad():
+            return self(observation).max(1)[1].view(1, 1)
         else:
             return torch.tensor([[random.randrange(self.n_actions)]], device=device, dtype=torch.long)
         #raise NotImplmentedError
