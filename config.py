@@ -28,6 +28,7 @@ CartPole = {
     'eps_end': 0.05,
     'anneal_length': 10**4,
     'n_actions': 2,
+    'obs_stack_size':4,
 }
 
 #Hyperparmameters for Pong-v0

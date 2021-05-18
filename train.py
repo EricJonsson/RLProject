@@ -61,7 +61,6 @@ if __name__ == '__main__':
                 obs = preprocess(obs, env=args.env).unsqueeze(0)
             else:
                 obs = None
-
             next_obs_stack = torch.cat((obs_stack[:, 1:, ...], obs.unsqueeze(1)), dim=1).to(device)
             memory.push(old_obs, action, next_obs_stack, reward)
             # TODO: Add the transition to the replay memory. Remember to convert
