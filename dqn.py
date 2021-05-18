@@ -47,8 +47,11 @@ class DQN(nn.Module):
         self.anneal_length = env_config["anneal_length"]
         self.n_actions = env_config["n_actions"]
 
-        self.fc1 = nn.Linear(4, 256)
-        self.fc2 = nn.Linear(256, self.n_actions)
+        self.conv1 = nn.Conv2d(4, 32, kernel_size=8, stride=4, padding=0)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=4, stride=2, padding=0)
+        self.conv3 = nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=0)
+        self.fc1 = nn.Linear(3136, 512)
+        self.fc2 = nn.Linear(512, self.n_actions)
 
         self.relu = nn.ReLU()
         self.flatten = nn.Flatten()
@@ -93,19 +96,19 @@ def optimize(dqn, target_dqn, memory, optimizer):
     #       Remember to move them to GPU if it is available, e.g., by using Tensor.to(device).
     #       Note that special care is needed for terminal transitions!
     obs_batch, action_batch, next_obs_batch, reward_batch = memory.sample(dqn.batch_size)
-    
+
     non_final_mask = torch.tensor(tuple(map(lambda s: s is not None, next_obs_batch))).to(device=device)
     non_final_next_states = torch.cat([s for s in next_obs_batch if s is not None])
-    
+
     obs_batch = torch.cat(obs_batch).to(device=device)
     action_batch = torch.tensor(action_batch).view(-1,1).to(device=device)
     reward_batch = torch.tensor(reward_batch).to(device=device)
-    
+
     # TODO: Compute the current estimates of the Q-values for each state-action
     #       pair (s,a). Here, torch.gather() is useful for selecting the Q-values
     #       corresponding to the chosen actions.
     q_values = dqn(obs_batch).gather(1, action_batch)
-    
+
     # TODO: Compute the Q-value targets. Only do this for non-terminal transitions!
     next_state_values = torch.zeros(dqn.batch_size).to(device=device)
     next_state_values[non_final_mask] = target_dqn(non_final_next_states).max(1)[0].detach()
