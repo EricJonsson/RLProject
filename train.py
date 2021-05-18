@@ -58,10 +58,12 @@ if __name__ == '__main__':
 
             # Preprocess incoming observation.
             if not done:
-                obs = preprocess(obs, envID=args.env, env=env).unsqueeze(0)
+                obs = preprocess(env.reset(), envID=args.env, env=env).unsqueeze(0)
+                next_obs_stack = torch.cat((obs_stack[:, 1:, ...], obs.unsqueeze(1)), dim=1).to(device)
             else:
                 obs = None
-            next_obs_stack = torch.cat((obs_stack[:, 1:, ...], obs.unsqueeze(1)), dim=1).to(device)
+
+
             memory.push(old_obs, action, next_obs_stack, reward)
             # TODO: Add the transition to the replay memory. Remember to convert
             #       everything to PyTorch tensors!
