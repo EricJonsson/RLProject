@@ -56,7 +56,7 @@ if __name__ == '__main__':
             env.render()
             # Preprocess incoming observation.
             if not done:
-                obs = preprocess(env.reset(), envID=args.env, env=env).unsqueeze(0)
+                obs = preprocess(obs, envID=args.env, env=env).unsqueeze(0)
                 next_obs_stack = torch.cat((obs_stack[:, 1:, ...], obs.unsqueeze(1)), dim=1).to(device)
             else:
                 printf("DONE")
