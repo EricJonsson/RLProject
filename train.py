@@ -16,6 +16,7 @@ parser.add_argument('--env', choices=['CartPole-v0','Pong-v0','Breakout-v0'])
 parser.add_argument('--render', default=False,type=bool,choices=[True, False])
 parser.add_argument('--evaluate_freq', type=int, default=25, help='How often to run evaluation.', nargs='?')
 parser.add_argument('--evaluation_episodes', type=int, default=5, help='Number of evaluation episodes.', nargs='?')
+parser.add_argument('--step_limit', type=int, default=0)
 
 # Hyperparameter configurations for different environments. See config.py.
 ENV_CONFIGS = {
@@ -55,8 +56,6 @@ if __name__ == '__main__':
             #print(env)
             #old_obs = obs
             obs, reward, done, info = env.step(action.item() + ENV_CONFIGS[args.env]['offset'])
-            if args.render:
-                env.render()
             # Preprocess incoming observation.
             if not done:
                 obs = preprocess(obs, envID=args.env, env=env).unsqueeze(0)
@@ -81,7 +80,7 @@ if __name__ == '__main__':
             count+=1
         # Evaluate the current agent.
         if episode % args.evaluate_freq == 0:
-            mean_return = evaluate_policy(dqn,env, env_config, args, n_episodes=args.evaluation_episodes)
+            mean_return = evaluate_policy(dqn,env, env_config, args, n_episodes=args.evaluation_episodes, render=args.render, step_limit=args.step_limit)
 
             print(f'Episode {episode}/{env_config["n_episodes"]}: {mean_return}')
 

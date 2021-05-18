@@ -26,7 +26,7 @@ ENV_CONFIGS = {
     'Breakout-v0': config.Breakout
 }
 
-def evaluate_policy(dqn, env, env_config, args, n_episodes, render=False, verbose=False):
+def evaluate_policy(dqn, env, env_config, args, n_episodes, step_limit, render=False, verbose=False):
     """Runs {n_episodes} episodes to evaluate current policy."""
     total_return = 0
     for i in range(n_episodes):
@@ -35,8 +35,9 @@ def evaluate_policy(dqn, env, env_config, args, n_episodes, render=False, verbos
 
         done = False
         episode_return = 0
-
-        while not done:
+        step = step_limit
+        while not done and step != 1:
+            step -= 1
             if render:
                 env.render()
 
