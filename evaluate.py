@@ -71,7 +71,7 @@ if __name__ == '__main__':
     dqn = torch.load(args.path, map_location=torch.device('cpu'))
     dqn.eval()
 
-    mean_return = evaluate_policy(dqn, env, env_config, args, args.n_eval_episodes, render=args.render and not args.save_video, verbose=True)
+    mean_return = evaluate_policy(dqn, env, env_config, args, args.n_eval_episodes, step_limit=0, render=args.render and not args.save_video, verbose=True)
     print(f'The policy got a mean return of {mean_return} over {args.n_eval_episodes} episodes.')
 
     env.close()
