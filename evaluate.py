@@ -36,11 +36,10 @@ def evaluate_policy(dqn, env, env_config, args, n_episodes, step_limit, render=F
         done = False
         episode_return = 0
         step = step_limit
-        while not done and step != 1:
-            step -= 1
+        while not done:
             if render:
                 env.render()
-
+            #ENV_CONFIGS[args.env]['offset']
             action = dqn.act(obs_stack, exploit=True).item() + ENV_CONFIGS[args.env]['offset']
             obs, reward, done, info = env.step(action)
 
@@ -62,6 +61,7 @@ if __name__ == '__main__':
 
     # Initialize environment and config
     env = gym.make(args.env)
+    env = gym.wrappers.AtariPreprocessing(env, screen_size=84, grayscale_obs=True, frame_skip=1, noop_max=30, scale_obs=True)
     env_config = ENV_CONFIGS[args.env]
 
     if args.save_video:

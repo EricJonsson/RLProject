@@ -30,8 +30,9 @@ if __name__ == '__main__':
 
     # Initialize environment and config.
     env = gym.make(args.env)
-    env_config = ENV_CONFIGS[args.env]
 
+    env_config = ENV_CONFIGS[args.env]
+    env = gym.wrappers.AtariPreprocessing(env, screen_size=84, grayscale_obs=True, frame_skip=1, noop_max=30, scale_obs=True)
     # Initialize deep Q-networks.
     dqn = DQN(env_config=env_config).to(device)
     # TODO: Create and initialize target Q-network.
@@ -61,10 +62,9 @@ if __name__ == '__main__':
                 obs = preprocess(obs, envID=args.env, env=env).unsqueeze(0)
                 next_obs_stack = torch.cat((obs_stack[:, 1:, ...], obs.unsqueeze(1)), dim=1).to(device)
             else:
-                obs = None
                 next_obs_stack = None
 
-
+            #action = action - ENV_CONFIGS[args.env]['offset']
             memory.push(obs_stack, action, next_obs_stack, reward)
             obs_stack = next_obs_stack
 

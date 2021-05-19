@@ -78,7 +78,7 @@ class DQN(nn.Module):
         #       the input would be a [32, 4] tensor and the output a [32, 1] tensor.
         # TODO: Implement epsilon-greedy exploration.
         if exploit == True:
-            return self(observation).max(1)[1].view(1, 1)
+            return self(observation).max(1)[1].view(1, 1) 
         
         eps_treshold = self.eps_end + (self.eps_start - self.eps_end) * math.exp(-1 * self.steps_done / self.anneal_length)
 
@@ -110,7 +110,6 @@ def optimize(dqn, target_dqn, memory, optimizer):
     obs_batch = torch.cat(obs_batch).to(device=device)
     action_batch = torch.tensor(action_batch).view(-1,1).to(device=device)
     reward_batch = torch.tensor(reward_batch).to(device=device)
-
     # TODO: Compute the current estimates of the Q-values for each state-action
     #       pair (s,a). Here, torch.gather() is useful for selecting the Q-values
     #       corresponding to the chosen actions.
