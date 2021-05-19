@@ -62,6 +62,8 @@ if __name__ == '__main__':
                 next_obs_stack = torch.cat((obs_stack[:, 1:, ...], obs.unsqueeze(1)), dim=1).to(device)
             else:
                 obs = None
+                obs_stack = None
+                next_obs_stack = None
 
 
             memory.push(obs_stack, action, next_obs_stack, reward)
